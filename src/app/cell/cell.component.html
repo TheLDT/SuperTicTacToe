@@ -1,1 +1,3 @@
-<div class="cell" (click)="setValue()">{{value}}</div>
+<div *ngIf="value" class="cell">{{value}}</div>
+<div *ngIf="!value" class="cell" (click)="setValue()" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+    {{current}}</div>

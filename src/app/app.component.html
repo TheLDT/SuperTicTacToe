@@ -1,6 +1,6 @@
 <div class="main-screen">
   <div class="big-grid">
-    <app-grid class="grid" ngClass="cell-{{i}}" (active)="setActiveFromChild($event)"
+    <app-grid class="grid" ngClass="cell-{{i}}"
       *ngFor="let item of [].constructor(9); let i = index" [index]="i"></app-grid>
   </div>
 

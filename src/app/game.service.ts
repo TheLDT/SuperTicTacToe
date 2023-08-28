@@ -12,6 +12,7 @@ export class GameService {
   static gameSubject: Subject<string> = new Subject();
   static gameSubjectActive: Subject<number> = new Subject();
   private nextGrid: number = -1;
+  private nextGridHover: number = -1;
   constructor() {
 
     for (let i = 0; i < 9; i++) {
@@ -25,6 +26,20 @@ export class GameService {
 
   public getNextGrid() {
     return this.nextGrid;
+  }
+
+  public setNextGridHover(val: number) {
+    if(this.bigGrid.cells[val-100] != undefined){
+      this.nextGridHover = 99;
+    } else {
+      this.nextGridHover = val;
+    }
+    
+    GameService.gameSubjectActive.next(this.nextGridHover);
+  }
+
+  public getNextGridHover() {
+    return this.nextGridHover;
   }
 
   public updateGrid(gridIndex: number, index: number, symbol: string) {

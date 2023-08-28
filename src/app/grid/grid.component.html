@@ -1,6 +1,6 @@
 <div class="cell-layers">
 
-    <div class="grid" [ngClass]="active2 && gridWinner === ''? 'grid-active':''">
+    <div class="grid" [ngClass]="{'grid-active': active && gridWinner === '',hoverGrid: hoverNext &&gridWinner === ''}">
         <app-cell ngClass="cell-{{i}}" *ngFor="let item of [].constructor(9); let i = index" [index]="i"
             [gridIndex]="index"></app-cell>
     </div>

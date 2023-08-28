@@ -11,11 +11,11 @@ export class GridComponent implements OnInit {
   public value: string;
   @Input() index: number;
   public gridWinner: string;
-  @Output() active: EventEmitter<boolean> = new EventEmitter<boolean>();
-  active2: boolean = true;
+  active: boolean = true;
+  hoverNext: boolean = true;
   private subWinner: Subscription;
   private subActive: Subscription;
-  
+
   constructor() {
     this.value = "";
     this.index = -1;
@@ -28,13 +28,19 @@ export class GridComponent implements OnInit {
     })
 
     this.subActive = GameService.gameSubjectActive.subscribe(a => {
+      console.log(a);
+
       if (a === this.index || a === -1) {
-        // this.active.emit(true)
-        this.active2 = true;
+        this.active = true;
+      } else if (a - 100 === this.index || a - 100 === -1) {
+        this.hoverNext = true;
       } else {
-        // this.active.emit(false)
-        this.active2 = false;
-      }      
+        if (a >= 99) {
+          this.hoverNext = false;
+        } else {
+          this.active = false;
+        }
+      }
     })
   }
 
