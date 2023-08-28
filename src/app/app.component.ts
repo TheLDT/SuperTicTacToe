@@ -7,4 +7,15 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'SuperTicTacToe';
+
+
+  active: boolean = true;
+
+  constructor() {
+
+  }
+
+  public setActiveFromChild(activeChild: boolean) {
+    this.active = activeChild;
+  }
 }

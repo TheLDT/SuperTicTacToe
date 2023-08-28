@@ -1,1 +1,105 @@
-/* You can add global styles to this file, and also import other style files */
+$border-size: 0.1rem
+$border-color: black
+
+@mixin resize($big-cell-size, $cell-size, $padding-size)
+    .grid
+        display: grid
+        grid-template-columns: 1fr 1fr 1fr
+        grid-template-rows: 1fr 1fr 1fr
+        padding: $padding-size
+
+    .big-grid
+        display: grid
+
+        grid-template-columns: $big-cell-size $big-cell-size $big-cell-size
+        grid-template-rows: $big-cell-size $big-cell-size $big-cell-size
+
+    .cell
+        display: grid
+        place-items: center
+        font-size: $cell-size - $padding-size
+        min-width: $cell-size
+        min-height: $cell-size
+        text-align: center
+        user-select: none
+
+    .grid-active
+        outline: red solid $padding-size/5
+
+    .message
+        text-align: center
+        font-size: $big-cell-size/2
+
+    .grid-winner
+        font-size: $big-cell-size * 0.87
+        width: $big-cell-size * 0.87
+        height: $big-cell-size * 0.87
+
+@media only screen and (max-width: 750px)
+    $big-cell-size: 7rem
+    $cell-size: $big-cell-size/4
+    $padding-size: .4rem
+
+    html,body
+        margin: 0
+        padding: 0
+
+    .main-screen
+        grid-auto-flow: row
+
+    @include resize($big-cell-size, $cell-size, $padding-size)
+
+@media only screen and (min-width: 751px)
+    $big-cell-size: 12rem
+    $cell-size: $big-cell-size/4
+    $padding-size: 0.75rem
+
+    .main-screen
+        grid-auto-flow: column
+
+    @include resize($big-cell-size, $cell-size, $padding-size)
+
+@media only screen and (min-width: 1001px)
+    $big-cell-size: 15rem
+    $cell-size: $big-cell-size/4
+    $padding-size: 1rem
+
+    .main-screen
+        grid-auto-flow: column
+
+    @include resize($big-cell-size, $cell-size, $padding-size)
+
+.main-screen
+    display: grid
+    place-items: center
+
+.cell-0
+    border-right: $border-size solid $border-color
+    border-bottom: $border-size solid $border-color
+
+.cell-1
+    border-bottom: $border-size solid $border-color
+
+.cell-2
+    border-left: $border-size solid $border-color
+    border-bottom: $border-size solid $border-color
+
+.cell-3
+    border-right: $border-size solid $border-color
+
+.cell-5
+    border-left: $border-size solid $border-color
+
+.cell-6
+    border-right: $border-size solid $border-color
+    border-top: $border-size solid $border-color
+
+.cell-7
+    border-top: $border-size solid $border-color
+
+.cell-8
+    border-left: $border-size solid $border-color
+    border-top: $border-size solid $border-color
+
+.cell-match
+    background: green

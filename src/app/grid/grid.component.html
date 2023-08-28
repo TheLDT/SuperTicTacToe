@@ -1,0 +1,12 @@
+<div class="cell-layers">
+
+    <div class="grid" [ngClass]="active2 && gridWinner === ''? 'grid-active':''">
+        <app-cell ngClass="cell-{{i}}" *ngFor="let item of [].constructor(9); let i = index" [index]="i"
+            [gridIndex]="index"></app-cell>
+    </div>
+
+    <div *ngIf="gridWinner==='X'" class="cell grid-winner">X</div>
+
+    <div *ngIf="gridWinner==='O'" class="cell grid-winner">O</div>
+
+</div>
