@@ -32,6 +32,8 @@ export class CellComponent implements OnInit {
 
       this.gameService.updateGrid(this.gridIndex, this.index, this.value);
     }
+
+    this.mouseLeave()
   }
 
   mouseEnter() {

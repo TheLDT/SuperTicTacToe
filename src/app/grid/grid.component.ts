@@ -12,7 +12,7 @@ export class GridComponent implements OnInit {
   @Input() index: number;
   public gridWinner: string;
   active: boolean = true;
-  hoverNext: boolean = true;
+  hoverNext: boolean = false;
   private subWinner: Subscription;
   private subActive: Subscription;
 
