@@ -24,9 +24,21 @@ $border-active-color: rgba(4, 119, 0, 0.23)
         text-align: center
         user-select: none
 
-    .message
+    .main-message,
+    .main-message > *
         text-align: center
-        font-size: $big-cell-size/2
+        font-size: calc($big-cell-size/3)
+        height: calc($big-cell-size/2)
+        margin: 0
+        padding: 0
+
+    .util-history
+        height: $big-cell-size*3 - $cell-size
+        max-height: $big-cell-size*2
+        overflow: scroll
+        border: .1rem solid black
+        text-align: center
+        
 
     .grid-winner
         font-size: $big-cell-size * 0.87
@@ -36,41 +48,35 @@ $border-active-color: rgba(4, 119, 0, 0.23)
 
 @media only screen and (max-width: 750px)
     $big-cell-size: 7rem
-    $cell-size: $big-cell-size/4
+    $cell-size: calc($big-cell-size/4)
     $padding-size: .4rem
 
     html,body
         margin: 0
         padding: 0
 
-    .main-screen
-        grid-auto-flow: row
-
     @include resize($big-cell-size, $cell-size, $padding-size)
 
 @media only screen and (min-width: 751px)
     $big-cell-size: 12rem
-    $cell-size: $big-cell-size/4
+    $cell-size: calc($big-cell-size/4)
     $padding-size: 0.75rem
-
-    .main-screen
-        grid-auto-flow: column
 
     @include resize($big-cell-size, $cell-size, $padding-size)
 
 @media only screen and (min-width: 1001px)
     $big-cell-size: 15rem
-    $cell-size: $big-cell-size/4
+    $cell-size: calc($big-cell-size/4)
     $padding-size: 1rem
-
-    .main-screen
-        grid-auto-flow: column
 
     @include resize($big-cell-size, $cell-size, $padding-size)
 
 .main-screen
     display: grid
     place-items: center
+    place-content: center
+    grid-auto-flow: row
+    grid-gap: .5rem
 
 .cell-0
     border-right: $border-size solid $border-color
@@ -112,8 +118,45 @@ $border-active-color: rgba(4, 119, 0, 0.23)
     -webkit-box-shadow: 0 0 5px 6px $border-hover-color
     -moz-box-shadow: 0 0 5px 6px $border-hover-color
 
-.cell-preview-hover    
+.cell-preview-hover
     opacity: 0.25
+    cursor: pointer
 
-.cell-match
-    background: green
+.cell-winner
+    background: rgb(150, 255, 146)
+    border-radius: 10rem
+
+.cell-last-played
+    background: rgb(146, 233, 255)
+    border-radius: 10rem
+
+.main-game
+    display: grid
+    grid-auto-flow: column
+    grid-gap: 1rem
+
+.util
+    display: grid
+    grid-auto-flow: row
+
+.util-undo
+    display: grid
+    place-content: center
+    border-radius: 10rem
+    width: 3rem
+    height: 3rem
+    overflow: visible
+
+    &:hover
+        cursor: pointer
+        box-shadow: 0 0 5px 6px $border-hover-color
+        -webkit-box-shadow: 0 0 5px 6px $border-hover-color
+        -moz-box-shadow: 0 0 5px 6px $border-hover-color
+
+    img
+        width: 2rem
+        height: 2rem
+
+.util-mid-row
+    display: grid
+    place-content: center

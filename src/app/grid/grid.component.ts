@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GameService } from '../game.service';
+import { HistoryService } from '../history.service';
 
 @Component({
   selector: 'app-grid',
@@ -9,30 +10,30 @@ import { GameService } from '../game.service';
 })
 export class GridComponent implements OnInit {
   public value: string;
-  @Input() index: number;
+  @Input() indexGrid: number;
   public gridWinner: string;
   active: boolean = true;
   hoverNext: boolean = false;
+  public lastGridPlayed:boolean = false;
   private subWinner: Subscription;
   private subActive: Subscription;
-
+  private subUndo: Subscription;
+  private subLastGrid: Subscription;
   constructor() {
     this.value = "";
-    this.index = -1;
+    this.indexGrid = -1;
     this.gridWinner = "";
 
-    this.subWinner = GameService.gameSubject.subscribe(l => {
-      if (+l.substring(0, 1) == this.index) {
-        this.gridWinner = l.substring(1);
+    this.subWinner = GameService.gridEnd.subscribe(l => {
+      if (+l.substring(0, 1) == this.indexGrid) {
+        this.gridWinner = l.substring(1, 2);
       }
     })
 
     this.subActive = GameService.gameSubjectActive.subscribe(a => {
-      console.log(a);
-
-      if (a === this.index || a === -1) {
+      if (a === this.indexGrid || a === -1) {
         this.active = true;
-      } else if (a - 100 === this.index || a - 100 === -1) {
+      } else if (a - 100 === this.indexGrid || a - 100 === -1) {
         this.hoverNext = true;
       } else {
         if (a >= 99) {
@@ -40,6 +41,20 @@ export class GridComponent implements OnInit {
         } else {
           this.active = false;
         }
+      }
+    })
+
+    this.subUndo = GameService.undo.subscribe(l => {
+      if (l.gridIndex == this.indexGrid) {
+        this.gridWinner = ""
+      }
+    })
+
+    this.subLastGrid = HistoryService.lastMove.subscribe(l => {
+      if (l.gridIndex == this.indexGrid) {
+        this.lastGridPlayed = true;
+      } else {
+        this.lastGridPlayed = false;
       }
     })
   }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { GameService } from './game.service';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +12,15 @@ export class AppComponent {
 
   active: boolean = true;
 
-  constructor() {
+  constructor(private gameService: GameService) {
 
   }
 
   public setActiveFromChild(activeChild: boolean) {
     this.active = activeChild;
+  }
+
+  public undo(){
+    this.gameService.undoMove()
   }
 }

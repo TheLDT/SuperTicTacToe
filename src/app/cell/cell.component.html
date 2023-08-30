@@ -1,3 +1,4 @@
-<div *ngIf="value" class="cell">{{value}}</div>
-<div *ngIf="!value" class="cell cell-preview-hover" (click)="setValue()" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+<div *ngIf="value" class="cell" [ngClass]="{'cell-winner': isWinner, 'cell-last-played': lastCellPlayed}">{{value}}</div>
+<div *ngIf="!value" class="cell" [ngClass]="{'cell-preview-hover': current}"
+    (click)="setValue()" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
     {{current}}</div>

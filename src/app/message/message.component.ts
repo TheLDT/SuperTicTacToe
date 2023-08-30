@@ -12,9 +12,11 @@ export class MessageComponent implements OnInit {
   private subscription: Subscription;
 
   constructor() {
+    
     this.subscription = MessageService.messageSubject.subscribe(l => {
       this.message = l;
     })
+    MessageService.messageSubject.next("Welcome! X plays first!")
   }
 
   ngOnInit(): void {

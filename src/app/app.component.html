@@ -1,8 +1,21 @@
 <div class="main-screen">
-  <div class="big-grid">
-    <app-grid class="grid" ngClass="cell-{{i}}"
-      *ngFor="let item of [].constructor(9); let i = index" [index]="i"></app-grid>
+  <app-message class="main-message"></app-message>
+  <div class="main-game">
+    <div class="big-grid">
+      <app-grid class="grid" ngClass="cell-{{i}}" *ngFor="let item of [].constructor(9); let i = index"
+        [indexGrid]="i"></app-grid>
+    </div>
+
+    <div class="util">
+      <div class="util-top-row">
+      </div>
+      <div class="util-mid-row">
+        <div class="util-undo" (click)="undo()">
+          <img src="assets/undo.svg" alt="undo button">
+        </div>
+      </div>
+      <app-history class="util-history"></app-history>
+    </div>
   </div>
 
-  <app-message class="message"></app-message>
 </div>
