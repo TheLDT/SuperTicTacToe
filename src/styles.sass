@@ -30,13 +30,13 @@ html, body
     --color-border-hover: rgba(0,0,0,0.23)
     --color-border-active: rgba(4, 119, 0, 0.23)
 
-// @media (prefers-color-scheme: dark)
-//     html,body
-//         @include darkMode()
+@media (prefers-color-scheme: dark)
+    html,body
+        @include darkMode()
 
-// @media (prefers-color-scheme: light)
-//     html,body
-//         @include lightMode()
+@media (prefers-color-scheme: light)
+    html,body
+        @include lightMode()
 
 .main-screen
     width: 100%
@@ -172,7 +172,9 @@ html, body
 
     .main-message,
     .main-message > *
-        text-align: center
+        display: grid
+        place-content: center
+        user-select: none
         font-size: calc($big-cell-size/3)
         height: calc($big-cell-size/2)
         margin: 0
@@ -214,17 +216,28 @@ html, body
     html,body
         margin: 0
         padding: 0
+        height: max(100% , 50rem)
 
     .main-game
         grid-auto-flow: row !important
+
     .util
         place-content: normal
 
+    .main-screen
+        justify-content: normal
+        align-content: baseline
+
+    .main-message
+        p
+            font-size: 4vh
+
     .util-history
         margin-top: 1rem
-        width: 100% !important
+        width: 90% !important
         border-bottom-left-radius: 1rem !important
         border-bottom-right-radius: 1rem !important
+        margin-bottom: 2rem
 
         .history-list
             display: grid
