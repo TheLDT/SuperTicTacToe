@@ -1,4 +1,4 @@
-<div class="main-screen">
+<div class="main-screen" [ngClass]="{'dark-theme':theme === 'dark', 'light-theme':theme === 'light'}">
   <app-message class="main-message"></app-message>
   <div class="main-game">
     <div class="big-grid">
@@ -10,12 +10,17 @@
       <div class="util-top-row">
       </div>
       <div class="util-mid-row">
-        <div class="util-undo" (click)="undo()">
+        <div class="util-button" (click)="undo()">
           <img src="assets/undo.svg" alt="undo button">
+        </div>
+        <div *ngIf="theme === 'dark'" class="util-button" (click)="toggleTheme()">
+          <img src="assets/sun.svg" alt="theme button">
+        </div>
+        <div *ngIf="theme === 'light'" class="util-button" (click)="toggleTheme()">
+          <img src="assets/moon.svg" alt="theme button">
         </div>
       </div>
       <app-history class="util-history"></app-history>
     </div>
   </div>
-
 </div>

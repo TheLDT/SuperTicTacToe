@@ -5,22 +5,21 @@ import { MessageService } from './message.service';
 import { HistoryService } from './history.service';
 import { Move } from './move.model';
 import { TurnService } from './turn.service';
+import { ActiveGrid } from './activeGrid.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
   public static gridEnd: Subject<string> = new Subject();
-  public static gameSubjectActive: Subject<number> = new Subject();
+  public static activeGrid: Subject<ActiveGrid> = new Subject();
   public static undo: Subject<Move> = new Subject();
 
   private grids: Grid[] = new Array();
   private bigGrid: Grid = new Grid;
   private nextGrid: number = -1;
-  private nextGridHover: number = -1;
 
   constructor(private historyService: HistoryService, private turnService: TurnService) {
-
     for (let i = 0; i < 9; i++) {
       this.grids[i] = new Grid;
       this.bigGrid.cells[i] = "";
@@ -35,36 +34,29 @@ export class GameService {
     return this.nextGrid;
   }
 
-  public setNextGridHover(val: number) {
-    if (val === 1000) {// out of bounds
-      this.nextGridHover = val;
-    } else if (this.bigGrid.cells[val - 100] != "") {
-      this.nextGridHover = 99;
-    } else {
-      this.nextGridHover = val;
+  public setNextGridHover(val: ActiveGrid) {    
+    if (this.bigGrid.cells[val.index] != "" && !val.outOfBounds) {
+       val.all = true;
     }
-
-    GameService.gameSubjectActive.next(this.nextGridHover);
-  }
-
-  public getNextGridHover() {
-    return this.nextGridHover;
+    GameService.activeGrid.next(val);
   }
 
   public updateGrid(gridIndex: number, index: number, symbol: string) {
     this.grids[gridIndex].cells[index] = symbol;
+    let activeGrid = new ActiveGrid();
     if (symbol != "") {
       this.checkGrid(gridIndex, symbol);
       //change the active grid
+      activeGrid.index = index;
       this.nextGrid = index;
       //if the active grid is full or won, play anywhere
-      if (this.bigGrid.cells[index] != "") {
+      if (this.bigGrid.cells[index] != "" && this.bigGrid.cells[index] != "U") {
+        activeGrid.all = true;
         this.nextGrid = -1;
       }
-      GameService.gameSubjectActive.next(this.nextGrid);
-      //update history
-      console.log(gridIndex, index, symbol);
-      
+
+      GameService.activeGrid.next(activeGrid);
+      //update history      
       this.historyService.addMove(new Move(gridIndex, index, symbol));
     } else {//symbol == "" means undo 
       this.grids[gridIndex].cellsUsed--;
@@ -73,10 +65,22 @@ export class GameService {
 
       let newMove = this.historyService.getLastMove()
       GameService.undo.next(new Move(gridIndex, index, ""));
-      GameService.gameSubjectActive.next(newMove ? newMove.index : -1);
+      if (newMove)
+        activeGrid.index = newMove.index
+      else
+        activeGrid.all = true
+      GameService.activeGrid.next(activeGrid);
       this.nextGrid = newMove ? newMove.index : -1;
     }
+  }
 
+  public undoMove() {
+    let move = this.historyService.getLastMove();
+    if (move) {
+      this.historyService.undoMove();
+      this.updateGrid(move.gridIndex, move.index, "")
+      this.turnService.changeTurn()
+    }
   }
 
   private checkGrid(gridIndex: number, symbol: string) {
@@ -107,12 +111,9 @@ export class GameService {
       grid.setWinner("Z")
       this.bigGrid.cells[gridIndex] = "Z";
       GameService.gridEnd.next(gridIndex + grid.winner);
-      this.checkUnwinnable();
-    }
-
-    //check unwinnable
-    if (gridIndex === -1) {
-      this.checkUnwinnable();
+      this.checkUnwinnable(-1);// check if the big grid is unwinnable
+    } else {
+      this.checkUnwinnable(gridIndex);
     }
   }
 
@@ -139,37 +140,44 @@ export class GameService {
     return grid.cells[one] === grid.cells[two] && grid.cells[two] === grid.cells[three];
   }
 
-  private combinationsX: string[] = ["012", "345", "678", "036", "147", "258", "048", "246"]
-  private combinationsO: string[] = ["012", "345", "678", "036", "147", "258", "048", "246"]
+  // private combinationsX: string[] = ["012", "345", "678", "036", "147", "258", "048", "246"]
+  // private combinationsO: string[] = ["012", "345", "678", "036", "147", "258", "048", "246"]
 
-  private checkUnwinnable() {
+  private checkUnwinnable(gridIndex: number) {
+    //already checked at cell count == 9
+    let grid = new Grid;
+    if (gridIndex == -1) {
+      grid = this.bigGrid;
+    } else {
+      if (this.bigGrid.cells[gridIndex] === "Z" || this.bigGrid.cells[gridIndex] === "U")
+        return;
+      grid = this.grids[gridIndex];
+    }
+    let combinationsXLocal: string[] = ["012", "345", "678", "036", "147", "258", "048", "246"]
+    let combinationsOLocal: string[] = ["012", "345", "678", "036", "147", "258", "048", "246"]
     //get cells equal to Z (unwinnable)
     for (let i = 0; i < 9; i++) {
-      let cell = this.bigGrid.cells[i];
-      if (cell === "Z") {//check winnable for either
-        //remove all potential combinations from valid table
-        this.combinationsX = this.combinationsX.filter(l => { return !l.includes(i + "") })
-        this.combinationsO = this.combinationsO.filter(l => { return !l.includes(i + "") })
-      } else if (cell === "X") {//remove winnables from O
-        //for each combination, check if the cells are not occupied by other player
-        for (let combo of this.combinationsO) {
-          let split: string[] = combo.split('');
-          if (this.threeNot(this.bigGrid.cells, "X", +split[0], +split[1], +split[2])) {
-            this.combinationsO = this.combinationsO.filter(l => { return l !== combo })
-          }
-        }
-      } else if (cell === "O") {//remove winnables from X
-        //for each combination, check if the cells are not occupied by other player
-        for (let combo of this.combinationsX) {
-          let split: string[] = combo.split('');
-          if (this.threeNot(this.bigGrid.cells, "O", +split[0], +split[1], +split[2])) {
-            this.combinationsX = this.combinationsX.filter(l => { return l !== combo })
-          }
-        }
+      let cell = grid.cells[i];
+      if (cell === 'X') {
+        combinationsOLocal = combinationsOLocal.filter(l => { return !l.includes(i + "") })
+      } else if (cell === 'O') {
+        combinationsXLocal = combinationsXLocal.filter(l => { return !l.includes(i + "") })
+      } else if (cell === 'Z' || cell === 'U') {
+        combinationsXLocal = combinationsXLocal.filter(l => { return !l.includes(i + "") })
+        combinationsOLocal = combinationsOLocal.filter(l => { return !l.includes(i + "") })
+      }
+
+      if (combinationsXLocal.length == 0 && combinationsOLocal.length == 0) {
+        //this cell cannot be won, but still should be played
+        this.bigGrid.cells[gridIndex] = "U";
+        this.checkUnwinnable(-1);
       }
     }
+    // console.log(gridIndex, this.bigGrid.cells[gridIndex]);
+    // console.log(combinationsXLocal);
+    // console.log(combinationsOLocal);
     // if valid table length is 0 then end game
-    if (this.combinationsX.length === 0 && this.combinationsO.length === 0) {
+    if (combinationsXLocal.length === 0 && combinationsXLocal.length === 0 && gridIndex === -1) {
       MessageService.messageSubject.next("Game over! No more possible combinations!");
     }
   }
@@ -186,14 +194,5 @@ export class GameService {
     }
 
     return false
-  }
-
-  public undoMove() {
-    let move = this.historyService.getLastMove();
-    if (move) {
-      this.historyService.undoMove();
-      this.updateGrid(move.gridIndex, move.index, "")
-      this.turnService.changeTurn()
-    }
   }
 }

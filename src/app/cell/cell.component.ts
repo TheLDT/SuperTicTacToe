@@ -3,6 +3,7 @@ import { TurnService } from '../turn.service';
 import { GameService } from '../game.service';
 import { Subscription, of } from 'rxjs';
 import { HistoryService } from '../history.service';
+import { ActiveGrid } from '../activeGrid.model';
 
 @Component({
   selector: 'app-cell',
@@ -49,7 +50,6 @@ export class CellComponent implements OnInit {
 
     this.subLastCell = HistoryService.lastMove.subscribe(l => {
       if (l.gridIndex == this.gridIndex && l.index == this.index) {
-        console.log("last move ",l);
         this.lastCellPlayed = true;
       } else {
         this.lastCellPlayed = false;
@@ -81,13 +81,18 @@ export class CellComponent implements OnInit {
     if (this.gameService.getNextGrid() === this.gridIndex || this.gameService.getNextGrid() === -1) {
       this.current = this.turnService.getTurn();
       //next grid hover
-      this.gameService.setNextGridHover(this.index + 100)
+      let activeGrid = new ActiveGrid();
+      activeGrid.index = this.index;
+      activeGrid.hover = true;
+      this.gameService.setNextGridHover(activeGrid)
     }
   }
 
   mouseLeave() {
     this.current = "";
-    this.gameService.setNextGridHover(1000)//out of bounds
+    let activeGrid = new ActiveGrid();
+    activeGrid.outOfBounds = true;
+    this.gameService.setNextGridHover(activeGrid)//out of bounds
   }
 
 }

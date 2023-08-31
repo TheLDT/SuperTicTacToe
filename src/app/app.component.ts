@@ -9,8 +9,8 @@ import { GameService } from './game.service';
 export class AppComponent {
   title = 'SuperTicTacToe';
 
-
   active: boolean = true;
+  public theme: string = "light";
 
   constructor(private gameService: GameService) {
 
@@ -20,7 +20,11 @@ export class AppComponent {
     this.active = activeChild;
   }
 
-  public undo(){
+  public undo() {
     this.gameService.undoMove()
+  }
+
+  public toggleTheme() {
+    this.theme = this.theme === 'light' ? 'dark' : 'light';    
   }
 }

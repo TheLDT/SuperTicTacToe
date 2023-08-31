@@ -14,7 +14,7 @@ export class GridComponent implements OnInit {
   public gridWinner: string;
   active: boolean = true;
   hoverNext: boolean = false;
-  public lastGridPlayed:boolean = false;
+  public lastGridPlayed: boolean = false;
   private subWinner: Subscription;
   private subActive: Subscription;
   private subUndo: Subscription;
@@ -30,17 +30,17 @@ export class GridComponent implements OnInit {
       }
     })
 
-    this.subActive = GameService.gameSubjectActive.subscribe(a => {
-      if (a === this.indexGrid || a === -1) {
-        this.active = true;
-      } else if (a - 100 === this.indexGrid || a - 100 === -1) {
-        this.hoverNext = true;
-      } else {
-        if (a >= 99) {
-          this.hoverNext = false;
+    this.subActive = GameService.activeGrid.subscribe(a => {
+      if (a.index === this.indexGrid || a.all) {        
+        if (a.hover) {
+          this.hoverNext = true;
         } else {
-          this.active = false;
+          this.active = true;
         }
+      } else if (a.hover || a.outOfBounds) {
+        this.hoverNext = false;
+      } else {
+        this.active = false;
       }
     })
 
