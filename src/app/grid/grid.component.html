@@ -1,13 +1,17 @@
 <div class="cell-layers">
 
-    <div class="grid"
-        [ngClass]="{'grid-active': active && gridWinner === '','grid-hover-next': hoverNext &&gridWinner === ''}">
+    <div class="grid" [ngClass]="{'grid-active': active && gridWinner === '',
+        'grid-hover-next': hoverNext &&gridWinner === '',
+        'grid-hide':(gridWinner === 'X' || gridWinner === 'O') && !hovered}" (mouseleave)="mouseLeave()">
         <app-cell ngClass="cell-{{i}}" *ngFor="let item of [].constructor(9); let i = index" [gridIndex]="indexGrid"
             [index]="i"></app-cell>
     </div>
 
-    <div *ngIf="gridWinner==='X'&&!lastGridPlayed" class="cell grid-winner">X</div>
+    <div *ngIf="gridWinner==='X'&&!lastGridPlayed&&!hovered" class="cell grid-winner"
+        [ngClass]="{'cell-winner':gridGameWinner}" (mouseenter)="mouseEnter()">X</div>
 
-    <div *ngIf="gridWinner==='O'&&!lastGridPlayed" class="cell grid-winner">O</div>
+    <div *ngIf="gridWinner==='O'&&!lastGridPlayed&&!hovered" class="cell grid-winner"
+        [ngClass]="{'cell-winner':gridGameWinner}" (mouseenter)="mouseEnter()">O
+    </div>
 
 </div>

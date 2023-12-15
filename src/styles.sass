@@ -2,6 +2,7 @@ $border-size: 0.1rem
 
 :root
     //default light mode
+    --color-background: white
     --color-border: rgba(0,0,0,0.23)
     --color-border-hover: rgba(0,0,0,0.23)
     --color-border-active: rgba(4, 119, 0, 0.23)
@@ -12,23 +13,29 @@ html, body
     margin: 0
     height: 100%
     width: 100%
-
-@mixin darkMode()
     background: black
     color: white
+
+@mixin darkMode()
+    --color-background: black
     --color-border: white
     --color-border-active: rgb(53, 187, 48)
     --color-border-hover: rgba(205, 205, 205)
+
+    background: var(--color-background)
+    color: white
 
     .util-button
         background-color: white
 
 @mixin lightMode()
-    background: white
-    color: black
+    --color-background: white
     --color-border: rgba(0,0,0,0.23)
     --color-border-hover: rgba(0,0,0,0.23)
     --color-border-active: rgba(4, 119, 0, 0.23)
+
+    background: var(--color-background)
+    color: black
 
 @media (prefers-color-scheme: dark)
     html,body
@@ -97,6 +104,10 @@ html, body
     opacity: 0.25
     cursor: pointer
 
+.grid-winner
+    background-color: var(--color-background)
+    border-radius: 10rem
+
 .cell-winner
     background: var(--color-winner)
     border-radius: 10rem
@@ -148,12 +159,15 @@ html, body
     place-content: center
     grid-auto-flow: column
 
+
+
 @mixin resize($big-cell-size, $cell-size, $padding-size)
     .grid
         display: grid
         grid-template-columns: 1fr 1fr 1fr
         grid-template-rows: 1fr 1fr 1fr
         padding: $padding-size
+        place-items: center
 
     .big-grid
         display: grid
@@ -161,6 +175,12 @@ html, body
         grid-template-columns: $big-cell-size $big-cell-size $big-cell-size
         grid-template-rows: $big-cell-size $big-cell-size $big-cell-size
 
+        // [class*=cell]
+        //     width: $cell-size
+        //     height: $cell-size
+    .cell-layers
+        width: $big-cell-size
+        height: $big-cell-size
     .cell
         display: grid
         place-items: center
@@ -203,7 +223,7 @@ html, body
                 border-radius: 10rem
 
     .grid-winner
-        font-size: $big-cell-size * 0.87
+        font-size: $big-cell-size * 0.87 - 2rem
         width: $big-cell-size * 0.87
         height: $big-cell-size * 0.87
         place-content: center
@@ -245,7 +265,7 @@ html, body
 
     @include resize($big-cell-size, $cell-size, $padding-size)
 
-@media only screen and (min-width: 751px)
+@media only screen and (min-width: 751px) and (max-width:1000px)
     $big-cell-size: 12rem
     $cell-size: calc($big-cell-size/4)
     $padding-size: 0.75rem

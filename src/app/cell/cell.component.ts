@@ -30,12 +30,11 @@ export class CellComponent implements OnInit {
     this.current = "";
 
     this.subWinner = GameService.gridEnd.subscribe(l => {
-      if (+l.substring(0, 1) == this.gridIndex) {
-        let split = l.split("-")
-        if (split.length > 1) {
-          if (split[1].includes(this.index + "")) {
+
+      if (l.gridIndex === this.gridIndex) {
+        if (l.winningCombination != "") {
+          if (l.winningCombination.includes(this.index + ""))
             this.isWinner = true;
-          }
         }
       }
     })
